@@ -1,0 +1,1758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flutter Interview Guide — Complete Q&A</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0e1a;
+      --surface: #111827;
+      --surface2: #1a2235;
+      --border: #1e2d45;
+      --accent: #00d4ff;
+      --accent2: #7c3aed;
+      --accent3: #10b981;
+      --warn: #f59e0b;
+      --danger: #ef4444;
+      --text: #e2e8f0;
+      --text-muted: #64748b;
+      --text-dim: #94a3b8;
+      --code-bg: #0d1117;
+
+      --easy: #10b981;
+      --medium: #f59e0b;
+      --hard: #ef4444;
+      --expert: #7c3aed;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.4;
+    }
+
+    /* ── HEADER ── */
+    header {
+      position: relative;
+      padding: 80px 40px 60px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    header::after {
+      content: '';
+      position: absolute;
+      top: -80px; left: 50%;
+      transform: translateX(-50%);
+      width: 600px; height: 300px;
+      background: radial-gradient(ellipse, rgba(0,212,255,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(0,212,255,0.08);
+      border: 1px solid rgba(0,212,255,0.25);
+      color: var(--accent);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 100px;
+      margin-bottom: 20px;
+    }
+
+    .badge::before { content: '◆'; font-size: 8px; }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2rem, 5vw, 3.8rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      background: linear-gradient(135deg, #fff 30%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 16px;
+    }
+
+    .subtitle {
+      font-size: 1.05rem;
+      color: var(--text-dim);
+      max-width: 560px;
+      margin: 0 auto 32px;
+    }
+
+    .stats-row {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--accent);
+      display: block;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    /* ── LAYOUT ── */
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 0 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── FILTER BAR ── */
+    .filter-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(10,14,26,0.92);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 24px;
+    }
+
+    .filter-inner {
+      max-width: 980px;
+      margin: 0 auto;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .filter-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-right: 4px;
+    }
+
+    .filter-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 5px 14px;
+      border-radius: 100px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      background: var(--surface2);
+      color: var(--text-dim);
+      border-color: var(--border);
+    }
+
+    .filter-btn:hover { color: var(--text); border-color: var(--text-muted); }
+
+    .filter-btn.active-all { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); color: #fff; }
+    .filter-btn.active-easy { background: rgba(16,185,129,0.15); border-color: var(--easy); color: var(--easy); }
+    .filter-btn.active-medium { background: rgba(245,158,11,0.15); border-color: var(--warn); color: var(--warn); }
+    .filter-btn.active-hard { background: rgba(239,68,68,0.15); border-color: var(--danger); color: var(--danger); }
+    .filter-btn.active-expert { background: rgba(124,58,237,0.15); border-color: var(--accent2); color: var(--accent2); }
+
+    /* ── SECTION ── */
+    .section {
+      padding: 48px 0 16px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .section-icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .section-count {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--text-muted);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      padding: 2px 8px;
+      border-radius: 100px;
+      margin-left: auto;
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      margin-bottom: 12px;
+      overflow: hidden;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .card:hover { border-color: rgba(0,212,255,0.2); transform: translateY(-1px); }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 18px 20px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .q-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-muted);
+      min-width: 28px;
+      padding-top: 2px;
+    }
+
+    .q-text {
+      flex: 1;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .card-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .diff-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 3px 9px;
+      border-radius: 100px;
+      border: 1px solid;
+    }
+
+    .diff-easy { color: var(--easy); border-color: var(--easy); background: rgba(16,185,129,0.08); }
+    .diff-medium { color: var(--warn); border-color: var(--warn); background: rgba(245,158,11,0.08); }
+    .diff-hard { color: var(--danger); border-color: var(--danger); background: rgba(239,68,68,0.08); }
+    .diff-expert { color: var(--accent2); border-color: var(--accent2); background: rgba(124,58,237,0.08); }
+
+    .chevron {
+      color: var(--text-muted);
+      font-size: 12px;
+      transition: transform 0.3s;
+      flex-shrink: 0;
+    }
+
+    .card.open .chevron { transform: rotate(180deg); }
+
+    .card-body {
+      display: none;
+      padding: 0 20px 20px 62px;
+      border-top: 1px solid var(--border);
+    }
+
+    .card.open .card-body { display: block; }
+
+    .card-body p {
+      color: var(--text-dim);
+      font-size: 0.9rem;
+      margin-bottom: 12px;
+    }
+
+    .card-body ul, .card-body ol {
+      color: var(--text-dim);
+      font-size: 0.9rem;
+      padding-left: 20px;
+      margin-bottom: 12px;
+    }
+
+    .card-body li { margin-bottom: 6px; }
+
+    .card-body strong { color: var(--text); font-weight: 600; }
+
+    .card-body .answer-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin: 16px 0 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .answer-label::before {
+      content: '';
+      display: block;
+      width: 16px; height: 1px;
+      background: var(--accent);
+    }
+
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent2);
+      border-radius: 8px;
+      padding: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: #a9b1d6;
+      overflow-x: auto;
+      margin: 12px 0;
+      line-height: 1.6;
+    }
+
+    pre .kw { color: #bb9af7; }
+    pre .str { color: #9ece6a; }
+    pre .cm { color: #565f89; font-style: italic; }
+    pre .fn { color: #7aa2f7; }
+    pre .num { color: #ff9e64; }
+    pre .cls { color: #2ac3de; }
+
+    .tip-box {
+      background: rgba(0,212,255,0.05);
+      border: 1px solid rgba(0,212,255,0.15);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-top: 12px;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+    }
+
+    .tip-box::before {
+      content: '💡 TIP — ';
+      color: var(--accent);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+    }
+
+    /* ── PROGRESS BAR ── */
+    .progress-bar-wrap {
+      background: var(--surface2);
+      border-radius: 100px;
+      height: 4px;
+      margin: 8px 0 24px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 100px;
+      background: linear-gradient(90deg, var(--accent2), var(--accent));
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      margin-top: 80px;
+      padding: 40px 24px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .footer-inner {
+      max-width: 980px;
+      margin: 0 auto;
+    }
+
+    .footer-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    footer p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .gh-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 20px;
+      padding: 10px 22px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      color: var(--text-dim);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .gh-btn:hover {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+    }
+
+    /* ── HIDDEN ── */
+    .card.hidden { display: none; }
+
+    /* ── SEARCH ── */
+    .search-wrap {
+      max-width: 980px;
+      margin: 32px auto 0;
+      padding: 0 24px;
+    }
+
+    .search-box {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 18px 12px 44px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: 14px center;
+    }
+
+    .search-box:focus { border-color: rgba(0,212,255,0.4); }
+    .search-box::placeholder { color: var(--text-muted); }
+
+    @media (max-width: 640px) {
+      header { padding: 50px 20px 40px; }
+      .card-body { padding-left: 20px; }
+      .stats-row { gap: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="badge">Flutter Interview Guide</div>
+  <h1>Flutter & Dart<br/>Interview Mastery</h1>
+  <p class="subtitle">Complete Q&A ordered by difficulty — from Beginner to Expert level. Tap any question to reveal the answer.</p>
+  <div class="stats-row">
+    <div class="stat"><span class="stat-num">80+</span><span class="stat-label">Questions</span></div>
+    <div class="stat"><span class="stat-num">4</span><span class="stat-label">Difficulty Levels</span></div>
+    <div class="stat"><span class="stat-num">12</span><span class="stat-label">Topic Categories</span></div>
+    <div class="stat"><span class="stat-num">2025</span><span class="stat-label">Edition</span></div>
+  </div>
+</header>
+
+<!-- SEARCH -->
+<div class="search-wrap">
+  <input class="search-box" type="text" id="searchInput" placeholder="Search questions…" />
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <div class="filter-inner">
+    <span class="filter-label">Filter:</span>
+    <button class="filter-btn active-all" onclick="filterCards('all', this)">All</button>
+    <button class="filter-btn" onclick="filterCards('easy', this)">🟢 Easy</button>
+    <button class="filter-btn" onclick="filterCards('medium', this)">🟡 Medium</button>
+    <button class="filter-btn" onclick="filterCards('hard', this)">🔴 Hard</button>
+    <button class="filter-btn" onclick="filterCards('expert', this)">🟣 Expert</button>
+  </div>
+</div>
+
+<div class="container" id="mainContent">
+
+  <!-- ════════════════════════════════════════
+       SECTION 1 — BEGINNER (EASY)
+  ════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(16,185,129,0.1)">🌱</div>
+      <div>
+        <div class="section-title">Core Concepts — Beginner</div>
+        <div style="font-size:0.8rem;color:var(--text-muted)">Flutter basics every developer must know</div>
+      </div>
+      <div class="section-count">Easy</div>
+    </div>
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:25%;background:var(--easy)"></div></div>
+
+    <!-- Q1 -->
+    <div class="card" data-diff="easy" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q01</span>
+        <span class="q-text">What is Flutter and why would you choose it?</span>
+        <div class="card-meta"><span class="diff-pill diff-easy">Easy</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <p>Flutter is <strong>Google's open-source UI toolkit</strong> for building natively compiled applications for mobile, web, and desktop from a single codebase using the Dart language.</p>
+        <p><strong>Key reasons to choose Flutter:</strong></p>
+        <ul>
+          <li><strong>Single codebase</strong> — one codebase targets iOS, Android, Web, macOS, Windows, Linux</li>
+          <li><strong>Hot Reload</strong> — see UI changes instantly without restarting the app or losing state</li>
+          <li><strong>High performance</strong> — Dart compiles directly to native ARM code; no JavaScript bridge</li>
+          <li><strong>Rich widget library</strong> — Material and Cupertino widgets for platform-specific look & feel</li>
+          <li><strong>Great for MVPs</strong> — faster time-to-market with native-like performance</li>
+        </ul>
+        <div class="tip-box">Flutter's rendering engine (Skia/Impeller) draws every pixel itself, guaranteeing 60/120fps consistent rendering across platforms.</div>
+      </div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="card" data-diff="easy" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q02</span>
+        <span class="q-text">What is the difference between StatelessWidget and StatefulWidget?</span>
+        <div class="card-meta"><span class="diff-pill diff-easy">Easy</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <ul>
+          <li><strong>StatelessWidget</strong> — immutable; its properties cannot change after creation. Use for static UI like Text, Icon, or any widget that doesn't need to update (e.g., labels, icons).</li>
+          <li><strong>StatefulWidget</strong> — mutable; maintains a <code>State</code> object that can be rebuilt via <code>setState()</code>. Use when the widget needs to respond to user interaction, timer events, or API responses.</li>
+        </ul>
+        <pre><span class="cm">// Stateless — never changes</span>
+<span class="kw">class</span> <span class="cls">MyLabel</span> <span class="kw">extends</span> <span class="cls">StatelessWidget</span> {
+  <span class="fn">Widget</span> <span class="fn">build</span>(BuildContext context) => <span class="cls">Text</span>(<span class="str">'Hello'</span>);
+}
+
+<span class="cm">// Stateful — can change</span>
+<span class="kw">class</span> <span class="cls">Counter</span> <span class="kw">extends</span> <span class="cls">StatefulWidget</span> {
+  <span class="cls">_CounterState</span> <span class="fn">createState</span>() => <span class="cls">_CounterState</span>();
+}
+<span class="kw">class</span> <span class="cls">_CounterState</span> <span class="kw">extends</span> <span class="cls">State</span>&lt;<span class="cls">Counter</span>&gt; {
+  <span class="kw">int</span> count = <span class="num">0</span>;
+  <span class="fn">Widget</span> <span class="fn">build</span>(context) => <span class="cls">Text</span>(<span class="str">'$count'</span>);
+}</pre>
+      </div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="card" data-diff="easy" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q03</span>
+        <span class="q-text">What is BuildContext in Flutter?</span>
+        <div class="card-meta"><span class="diff-pill diff-easy">Easy</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <p><strong>BuildContext</strong> is a reference to the location of a widget within the widget tree. It provides access to:</p>
+        <ul>
+          <li>The widget's position in the tree (used by <code>Navigator</code>, <code>Theme</code>, <code>MediaQuery</code>)</li>
+          <li>Ancestor widgets via <code>context.read&lt;T&gt;()</code> or <code>Provider.of&lt;T&gt;(context)</code></li>
+          <li>Screen size via <code>MediaQuery.of(context).size</code></li>
+        </ul>
+        <div class="tip-box">Every widget's <code>build(BuildContext context)</code> method receives a fresh context. Never use a context after its widget has been disposed.</div>
+      </div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="card" data-diff="easy" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q04</span>
+        <span class="q-text">What is Hot Reload vs Hot Restart?</span>
+        <div class="card-meta"><span class="diff-pill diff-easy">Easy</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <ul>
+          <li><strong>Hot Reload</strong> — Injects updated code into the Dart VM and rebuilds the widget tree. <em>Preserves app state.</em> Does NOT re-run <code>main()</code> or <code>initState()</code>. Best for UI tweaks.</li>
+          <li><strong>Hot Restart</strong> — Recompiles the full app and restarts from scratch. <em>Loses app state.</em> Useful after changing app logic, adding new dependencies, or modifying <code>initState()</code>.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="card" data-diff="easy" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q05</span>
+        <span class="q-text">What is the StatefulWidget lifecycle?</span>
+        <div class="card-meta"><span class="diff-pill diff-easy">Easy</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <ol>
+          <li><strong>createState()</strong> — Creates the State object. Called once.</li>
+          <li><strong>initState()</strong> — First method called on State. Initialize variables, start animations, subscribe to streams.</li>
+          <li><strong>didChangeDependencies()</strong> — Called after initState and whenever an InheritedWidget dependency changes.</li>
+          <li><strong>build()</strong> — Returns the widget tree. Called every time state changes.</li>
+          <li><strong>didUpdateWidget()</strong> — Called when parent widget passes new configuration.</li>
+          <li><strong>setState()</strong> — Notifies framework to rebuild this widget.</li>
+          <li><strong>deactivate()</strong> — Called when widget removed from tree temporarily.</li>
+          <li><strong>dispose()</strong> — Final cleanup. Cancel timers, close streams, release controllers here.</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- Q6 -->
+    <div class="card" data-diff="easy" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q06</span>
+        <span class="q-text">What is the difference between SizedBox and Container?</span>
+        <div class="card-meta"><span class="diff-pill diff-easy">Easy</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <ul>
+          <li><strong>SizedBox</strong> — Lightweight widget for fixed width/height or spacing. No decoration, no padding, no color. Use when you just need size or an empty gap.</li>
+          <li><strong>Container</strong> — Feature-rich box that supports padding, margin, color, decoration, transform, constraints, and child alignment. Heavier than SizedBox.</li>
+        </ul>
+        <div class="tip-box">Prefer <code>SizedBox</code> for spacing between widgets instead of <code>Container</code> for better performance.</div>
+      </div>
+    </div>
+
+    <!-- Q7 -->
+    <div class="card" data-diff="easy" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q07</span>
+        <span class="q-text">What is the difference between Expanded and Flexible?</span>
+        <div class="card-meta"><span class="diff-pill diff-easy">Easy</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <ul>
+          <li><strong>Expanded</strong> — Forces its child to fill all available space in the main axis. It's equivalent to <code>Flexible(fit: FlexFit.tight)</code>.</li>
+          <li><strong>Flexible</strong> — Allows its child to fill available space but the child can be smaller (<code>FlexFit.loose</code> by default — WRAP_CONTENT).</li>
+        </ul>
+        <p>Both accept a <code>flex</code> factor to distribute space proportionally among siblings.</p>
+      </div>
+    </div>
+
+    <!-- Q8 -->
+    <div class="card" data-diff="easy" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q08</span>
+        <span class="q-text">What are final, const, and static in Dart?</span>
+        <div class="card-meta"><span class="diff-pill diff-easy">Easy</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <ul>
+          <li><strong>const</strong> — Compile-time constant. Value must be known at compile time. Creates a canonical instance (memory efficient). <code>const a = 1;</code></li>
+          <li><strong>final</strong> — Runtime constant. Value assigned once at runtime, never changes after. <code>final name = getName();</code></li>
+          <li><strong>static</strong> — Class-level variable/method shared across all instances. Accessed via the class name, not an instance.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Q9 -->
+    <div class="card" data-diff="easy" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q09</span>
+        <span class="q-text">What is pubspec.yaml?</span>
+        <div class="card-meta"><span class="diff-pill diff-easy">Easy</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <p>The project configuration file written in YAML. It defines:</p>
+        <ul>
+          <li><strong>dependencies</strong> — packages required in production (e.g., <code>dio</code>, <code>bloc</code>)</li>
+          <li><strong>dev_dependencies</strong> — packages only for development/testing (e.g., <code>mockito</code>, <code>flutter_test</code>)</li>
+          <li>Flutter SDK constraints, assets (images, fonts), and project metadata (name, version)</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Q10 -->
+    <div class="card" data-diff="easy" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q10</span>
+        <span class="q-text">What is the difference between ListView and ListView.builder?</span>
+        <div class="card-meta"><span class="diff-pill diff-easy">Easy</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <ul>
+          <li><strong>ListView</strong> — Creates all children at once (eager loading). Good for small, fixed lists that all fit on screen.</li>
+          <li><strong>ListView.builder</strong> — Creates items lazily (on demand) as they scroll into view. Essential for large or infinite lists. Much better performance.</li>
+        </ul>
+        <pre><span class="cls">ListView</span>.builder(
+  itemCount: items.length,
+  itemBuilder: (context, index) => <span class="cls">ListTile</span>(title: <span class="cls">Text</span>(items[index])),
+)</pre>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ════════════════════════════════════════
+       SECTION 2 — MEDIUM
+  ════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(245,158,11,0.1)">⚡</div>
+      <div>
+        <div class="section-title">Intermediate Concepts</div>
+        <div style="font-size:0.8rem;color:var(--text-muted)">State management, async, architecture patterns</div>
+      </div>
+      <div class="section-count">Medium</div>
+    </div>
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:50%;background:var(--warn)"></div></div>
+
+    <!-- Q11 -->
+    <div class="card" data-diff="medium" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q11</span>
+        <span class="q-text">Explain Future, Stream, async, and await in Dart.</span>
+        <div class="card-meta"><span class="diff-pill diff-medium">Medium</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <ul>
+          <li><strong>Future&lt;T&gt;</strong> — Represents a single async value that will be available later. Like a Promise in JS. Completes once (success or error).</li>
+          <li><strong>Stream&lt;T&gt;</strong> — Represents a sequence of async events over time (multiple values). Like an Observable. Used for real-time data (websockets, location, etc.).</li>
+          <li><strong>async</strong> — Marks a function as asynchronous; it returns a Future implicitly.</li>
+          <li><strong>await</strong> — Pauses execution inside an async function until the Future completes.</li>
+          <li><strong>async*</strong> — Used to create a Stream (generator function). Used with <code>yield</code>.</li>
+          <li><strong>yield</strong> — Emits a value into a Stream (used inside async* functions).</li>
+        </ul>
+        <pre><span class="cm">// Future example</span>
+<span class="cls">Future</span>&lt;<span class="kw">String</span>&gt; fetchName() <span class="kw">async</span> {
+  <span class="kw">await</span> <span class="cls">Future</span>.delayed(<span class="cls">Duration</span>(seconds: <span class="num">1</span>));
+  <span class="kw">return</span> <span class="str">'Flutter'</span>;
+}
+
+<span class="cm">// Stream example (async*)</span>
+<span class="cls">Stream</span>&lt;<span class="kw">int</span>&gt; counter() <span class="kw">async*</span> {
+  <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; <span class="num">5</span>; i++) {
+    <span class="kw">await</span> <span class="cls">Future</span>.delayed(<span class="cls">Duration</span>(seconds: <span class="num">1</span>));
+    <span class="kw">yield</span> i;
+  }
+}</pre>
+      </div>
+    </div>
+
+    <!-- Q12 -->
+    <div class="card" data-diff="medium" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q12</span>
+        <span class="q-text">What is the difference between FutureBuilder and StreamBuilder?</span>
+        <div class="card-meta"><span class="diff-pill diff-medium">Medium</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <ul>
+          <li><strong>FutureBuilder</strong> — Builds UI from a single Future. Use for one-time async operations: HTTP requests, reading a file, getting device battery. Rebuilds once when the Future completes.</li>
+          <li><strong>StreamBuilder</strong> — Rebuilds UI every time the Stream emits a new event. Use for continuous data: location updates, real-time chat, music playback progress.</li>
+        </ul>
+        <div class="tip-box">Both handle <code>ConnectionState</code> (none, waiting, active, done) and snapshot data/error in their builder callbacks.</div>
+      </div>
+    </div>
+
+    <!-- Q13 -->
+    <div class="card" data-diff="medium" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q13</span>
+        <span class="q-text">Single-subscription vs Broadcast streams — what's the difference?</span>
+        <div class="card-meta"><span class="diff-pill diff-medium">Medium</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <ul>
+          <li><strong>Single-subscription</strong> — Can only have one listener at a time. Default stream type. If you listen again, it throws an error. Good for file I/O, HTTP responses.</li>
+          <li><strong>Broadcast</strong> — Multiple listeners allowed simultaneously. Events are fired whether or not there are listeners. Good for UI event streams, state streams (BLoC uses this).</li>
+        </ul>
+        <pre><span class="cm">// Convert to broadcast</span>
+<span class="kw">final</span> broadcastStream = myStream.asBroadcastStream();</pre>
+      </div>
+    </div>
+
+    <!-- Q14 -->
+    <div class="card" data-diff="medium" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q14</span>
+        <span class="q-text">What are Keys in Flutter and when do you use them?</span>
+        <div class="card-meta"><span class="diff-pill diff-medium">Medium</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <p>Keys help Flutter uniquely identify widgets in the widget tree, preserving state when widgets move or are rebuilt. Types:</p>
+        <ul>
+          <li><strong>ValueKey</strong> — Identity based on a value (e.g., <code>ValueKey('user-42')</code>)</li>
+          <li><strong>ObjectKey</strong> — Identity based on an object reference</li>
+          <li><strong>UniqueKey</strong> — Always unique; forces widget recreation (use sparingly)</li>
+          <li><strong>GlobalKey</strong> — Access widget state from anywhere in the tree; can also get render box info</li>
+          <li><strong>PageStorageKey</strong> — Preserve scroll position across navigations</li>
+        </ul>
+        <div class="tip-box">Use keys when reordering StatefulWidgets in a list — without keys, Flutter might associate the wrong state to the wrong widget.</div>
+      </div>
+    </div>
+
+    <!-- Q15 -->
+    <div class="card" data-diff="medium" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q15</span>
+        <span class="q-text">What is the BLoC pattern and how does it work?</span>
+        <div class="card-meta"><span class="diff-pill diff-medium">Medium</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <p><strong>BLoC</strong> (Business Logic Component) separates UI from business logic using Events and States:</p>
+        <ul>
+          <li><strong>Event</strong> — User action dispatched from UI (e.g., <code>LoginPressed</code>)</li>
+          <li><strong>Bloc</strong> — Receives events, processes them, emits new states via an EventHandler</li>
+          <li><strong>State</strong> — Represents the UI at a point in time (e.g., <code>LoginLoading</code>, <code>LoginSuccess</code>)</li>
+        </ul>
+        <p>Key BLoC widgets: <strong>BlocProvider</strong> (creates bloc), <strong>BlocBuilder</strong> (rebuilds on state), <strong>BlocListener</strong> (side effects only), <strong>BlocConsumer</strong> (both), <strong>BlocSelector</strong> (filter specific state slices).</p>
+        <pre><span class="cm">// Cubit (simpler BLoC)</span>
+<span class="kw">class</span> <span class="cls">CounterCubit</span> <span class="kw">extends</span> <span class="cls">Cubit</span>&lt;<span class="kw">int</span>&gt; {
+  <span class="cls">CounterCubit</span>() : <span class="kw">super</span>(<span class="num">0</span>);
+  <span class="kw">void</span> <span class="fn">increment</span>() => <span class="fn">emit</span>(state + <span class="num">1</span>);
+}</pre>
+      </div>
+    </div>
+
+    <!-- Q16 -->
+    <div class="card" data-diff="medium" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q16</span>
+        <span class="q-text">What is buildWhen and listenWhen in BLoC?</span>
+        <div class="card-meta"><span class="diff-pill diff-medium">Medium</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <ul>
+          <li><strong>buildWhen(prev, curr)</strong> — A condition in <code>BlocBuilder</code>. If it returns <code>false</code>, the widget is NOT rebuilt for that state change. Prevents unnecessary UI rebuilds.</li>
+          <li><strong>listenWhen(prev, curr)</strong> — Same concept for <code>BlocListener</code>. If <code>false</code>, the listener callback is not called.</li>
+        </ul>
+        <pre><span class="cls">BlocBuilder</span>&lt;<span class="cls">CounterBloc</span>, <span class="kw">int</span>&gt;(
+  buildWhen: (prev, curr) => curr % <span class="num">2</span> == <span class="num">0</span>, <span class="cm">// rebuild only on even numbers</span>
+  builder: (context, state) => <span class="cls">Text</span>(<span class="str">'$state'</span>),
+)</pre>
+      </div>
+    </div>
+
+    <!-- Q17 -->
+    <div class="card" data-diff="medium" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q17</span>
+        <span class="q-text">Provider vs BLoC — when to use which?</span>
+        <div class="card-meta"><span class="diff-pill diff-medium">Medium</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <ul>
+          <li><strong>Provider</strong> — Simpler, less boilerplate. Best for small/medium apps, simple state, or when you need scoped state without complex event flows.</li>
+          <li><strong>BLoC</strong> — Strict separation of concerns with Events/States. Best for large apps, complex async flows, when testability is critical, or when multiple developers are working on the same feature.</li>
+        </ul>
+        <div class="tip-box">BLoC's explicit event/state model makes it easier to trace bugs and write unit tests. Provider is faster to set up but harder to scale.</div>
+      </div>
+    </div>
+
+    <!-- Q18 -->
+    <div class="card" data-diff="medium" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q18</span>
+        <span class="q-text">What is a Mixin in Dart?</span>
+        <div class="card-meta"><span class="diff-pill diff-medium">Medium</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <p>A mixin is a way to reuse code across multiple class hierarchies without using inheritance. It "plugs in" methods and properties into a class using the <code>with</code> keyword.</p>
+        <pre><span class="kw">mixin</span> <span class="cls">LogMixin</span> {
+  <span class="kw">void</span> <span class="fn">log</span>(<span class="kw">String</span> msg) => print(<span class="str">'[LOG] $msg'</span>);
+}
+
+<span class="kw">class</span> <span class="cls">ApiService</span> <span class="kw">with</span> <span class="cls">LogMixin</span> {
+  <span class="kw">void</span> <span class="fn">fetchData</span>() {
+    <span class="fn">log</span>(<span class="str">'Fetching...'</span>); <span class="cm">// from mixin</span>
+  }
+}</pre>
+        <div class="tip-box"><code>SingleTickerProviderStateMixin</code> is a famous Flutter mixin used for animation controllers.</div>
+      </div>
+    </div>
+
+    <!-- Q19 -->
+    <div class="card" data-diff="medium" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q19</span>
+        <span class="q-text">What is InheritedWidget?</span>
+        <div class="card-meta"><span class="diff-pill diff-medium">Medium</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <p>InheritedWidget is Flutter's built-in mechanism for <strong>passing data down the widget tree</strong> efficiently without prop drilling. Descendant widgets can access the nearest ancestor InheritedWidget using <code>context.dependOnInheritedWidgetOfExactType()</code>.</p>
+        <p>When the InheritedWidget changes, only widgets that depend on it are rebuilt. <code>Provider</code>, <code>Theme</code>, <code>MediaQuery</code>, and <code>Navigator</code> are all built on top of InheritedWidget.</p>
+      </div>
+    </div>
+
+    <!-- Q20 -->
+    <div class="card" data-diff="medium" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q20</span>
+        <span class="q-text">What is Equatable and why is it used in BLoC?</span>
+        <div class="card-meta"><span class="diff-pill diff-medium">Medium</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <p>By default, Dart compares objects by reference (<code>==</code> checks if they're the same instance). BLoC only emits a new state if it's different from the previous one.</p>
+        <p><strong>Equatable</strong> overrides <code>==</code> and <code>hashCode</code> based on <code>props</code>, so two objects with the same data are considered equal, preventing unnecessary state emissions and rebuilds.</p>
+        <pre><span class="kw">class</span> <span class="cls">UserState</span> <span class="kw">extends</span> <span class="cls">Equatable</span> {
+  <span class="kw">final</span> <span class="kw">String</span> name;
+  <span class="kw">const</span> <span class="cls">UserState</span>(<span class="kw">this</span>.name);
+  <span class="kw">@override</span>
+  <span class="cls">List</span>&lt;<span class="cls">Object</span>&gt; <span class="kw">get</span> props => [name];
+}</pre>
+      </div>
+    </div>
+
+    <!-- Q21 -->
+    <div class="card" data-diff="medium" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q21</span>
+        <span class="q-text">What are the SOLID principles?</span>
+        <div class="card-meta"><span class="diff-pill diff-medium">Medium</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <ul>
+          <li><strong>S — Single Responsibility</strong>: A class should do one thing. One reason to change.</li>
+          <li><strong>O — Open/Closed</strong>: Open for extension, closed for modification. Add behavior via inheritance/composition, not editing existing code.</li>
+          <li><strong>L — Liskov Substitution</strong>: Subclasses should be substitutable for their base class without breaking the program.</li>
+          <li><strong>I — Interface Segregation</strong>: Many small, specific interfaces are better than one large general-purpose interface. Don't force classes to implement methods they don't need.</li>
+          <li><strong>D — Dependency Inversion</strong>: High-level modules should depend on abstractions, not concretions. Both should depend on interfaces.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Q22 -->
+    <div class="card" data-diff="medium" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q22</span>
+        <span class="q-text">How does Flutter handle routing and navigation?</span>
+        <div class="card-meta"><span class="diff-pill diff-medium">Medium</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <ul>
+          <li><strong>Navigator 1.0</strong> — Imperative. <code>Navigator.push()</code>, <code>Navigator.pop()</code>. Simple but hard to handle deep links and web URLs.</li>
+          <li><strong>Navigator 2.0</strong> — Declarative. Full control over the navigation stack via a Router and RouteInformationParser. Complex but powerful.</li>
+          <li><strong>GoRouter</strong> — The recommended package. Declarative URL-based routing with deep linking, guards, and named routes. Simple API over Navigator 2.0.</li>
+          <li><strong>auto_route</strong> — Code-generated routing with type-safe arguments.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Q23 -->
+    <div class="card" data-diff="medium" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q23</span>
+        <span class="q-text">What is Dependency Injection in Flutter?</span>
+        <div class="card-meta"><span class="diff-pill diff-medium">Medium</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <p>DI is a design pattern where a class receives its dependencies from outside rather than creating them itself. This decouples components making code more testable and maintainable.</p>
+        <p>In Flutter, common DI approaches:</p>
+        <ul>
+          <li><strong>Constructor injection</strong> — Pass dependencies via constructor</li>
+          <li><strong>get_it</strong> — Service locator pattern; register singletons/factories globally</li>
+          <li><strong>Provider / Riverpod</strong> — DI via the widget tree</li>
+          <li><strong>injectable</strong> — Code generation for get_it</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Q24 -->
+    <div class="card" data-diff="medium" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q24</span>
+        <span class="q-text">What is the difference between List, Map, and Set in Dart?</span>
+        <div class="card-meta"><span class="diff-pill diff-medium">Medium</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <ul>
+          <li><strong>List</strong> — Ordered collection, allows duplicates. Index-based access. <code>[1, 2, 3]</code></li>
+          <li><strong>Set</strong> — Unordered collection, <em>no duplicates</em>. Faster lookup than List. <code>{1, 2, 3}</code></li>
+          <li><strong>Map</strong> — Key-value pairs. Keys are unique. <code>{'name': 'Ali', 'age': 25}</code></li>
+        </ul>
+        <div class="tip-box">Use <code>Set</code> when you need to check for containment frequently — <code>set.contains(x)</code> is O(1) vs O(n) for List.</div>
+      </div>
+    </div>
+
+    <!-- Q25 -->
+    <div class="card" data-diff="medium" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q25</span>
+        <span class="q-text">What is Deep Linking in Flutter?</span>
+        <div class="card-meta"><span class="diff-pill diff-medium">Medium</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <p>Deep linking allows a URL to open a specific screen inside your app directly. Components of a deep link URL:</p>
+        <ul>
+          <li><strong>Scheme</strong> — Protocol (<code>https://</code> or custom <code>myapp://</code>)</li>
+          <li><strong>Host</strong> — Domain (<code>example.com</code>)</li>
+          <li><strong>Path</strong> — Route within app (<code>/profile/42</code>)</li>
+        </ul>
+        <p>Flutter supports deep linking via GoRouter's <code>initialLocation</code> or by configuring <code>AndroidManifest.xml</code> (Android) and <code>Info.plist</code> (iOS). <strong>Dynamic linking</strong> (Firebase) also handles cases where the app isn't installed yet.</p>
+      </div>
+    </div>
+
+    <!-- Q26 -->
+    <div class="card" data-diff="medium" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q26</span>
+        <span class="q-text">What are JIT and AOT compilation? Why does Flutter use both?</span>
+        <div class="card-meta"><span class="diff-pill diff-medium">Medium</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <ul>
+          <li><strong>JIT (Just-In-Time)</strong> — Used in <em>debug mode</em>. Compiles Dart code at runtime. Enables hot reload and faster development iterations. Larger app size, slower startup.</li>
+          <li><strong>AOT (Ahead-Of-Time)</strong> — Used in <em>release mode</em>. Compiles Dart to native ARM code before the app runs. Results in faster startup, better performance, smaller runtime footprint.</li>
+        </ul>
+        <div class="tip-box">This dual approach gives developers the best of both worlds: fast development with JIT, and production performance with AOT.</div>
+      </div>
+    </div>
+
+    <!-- Q27 -->
+    <div class="card" data-diff="medium" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q27</span>
+        <span class="q-text">What are the three trees in Flutter (Widget, Element, RenderObject)?</span>
+        <div class="card-meta"><span class="diff-pill diff-medium">Medium</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <ul>
+          <li><strong>Widget Tree</strong> — Blueprint/configuration. Immutable. Describes what the UI should look like. Rebuilt frequently, but cheap because widgets are just config objects.</li>
+          <li><strong>Element Tree</strong> — Represents the actual instantiation of each widget in the tree. Persists across rebuilds, tracking widget lifecycle (Stateless or Stateful element).</li>
+          <li><strong>RenderObject Tree</strong> — Handles actual layout, painting, and hit testing. The most expensive tree — Flutter avoids rebuilding it unless necessary.</li>
+        </ul>
+        <div class="tip-box">The Element tree is Flutter's reconciliation layer — it matches the new Widget tree against the old one to minimize RenderObject updates.</div>
+      </div>
+    </div>
+
+    <!-- Q28 -->
+    <div class="card" data-diff="medium" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q28</span>
+        <span class="q-text">What is Typedef in Dart?</span>
+        <div class="card-meta"><span class="diff-pill diff-medium">Medium</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <p><code>typedef</code> creates an alias for a function type, making it more readable and reusable.</p>
+        <pre><span class="kw">typedef</span> <span class="cls">IntCallback</span> = <span class="kw">void</span> <span class="cls">Function</span>(<span class="kw">int</span> value);
+
+<span class="kw">void</span> <span class="fn">doSomething</span>(<span class="cls">IntCallback</span> callback) {
+  callback(<span class="num">42</span>);
+}
+
+<span class="cm">// Usage</span>
+<span class="fn">doSomething</span>((val) => print(val)); <span class="cm">// prints 42</span></pre>
+        <p>Also used for generic type aliases with Dart generics: <code>typedef JsonMap = Map&lt;String, dynamic&gt;;</code></p>
+      </div>
+    </div>
+
+    <!-- Q29 -->
+    <div class="card" data-diff="medium" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q29</span>
+        <span class="q-text">How do you handle errors in networking / API calls in Flutter?</span>
+        <div class="card-meta"><span class="diff-pill diff-medium">Medium</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <ul>
+          <li>Wrap API calls in <code>try/catch</code> to handle <code>DioException</code>, <code>SocketException</code>, <code>TimeoutException</code></li>
+          <li>Check <code>response.statusCode</code> for HTTP errors (4xx, 5xx)</li>
+          <li>Use <strong>Interceptors</strong> (in Dio) to centrally handle auth errors, retry logic, logging</li>
+          <li>Return a sealed class or <code>Either&lt;Failure, Success&gt;</code> (from <code>dartz</code> or <code>fpdart</code>) from repositories</li>
+          <li>Emit error states from BLoC to show error UI</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Q30 -->
+    <div class="card" data-diff="medium" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q30</span>
+        <span class="q-text">What is Unit Testing and Mocking in Flutter?</span>
+        <div class="card-meta"><span class="diff-pill diff-medium">Medium</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <p>Flutter has 3 testing layers:</p>
+        <ul>
+          <li><strong>Unit tests</strong> — Test a single function/class in isolation. Fast. No Flutter framework needed.</li>
+          <li><strong>Widget tests</strong> — Test widgets by rendering them in a test environment. <code>WidgetTester</code> simulates interactions.</li>
+          <li><strong>Integration tests</strong> — Full app tests on a real device/emulator. Slowest but most realistic.</li>
+        </ul>
+        <p><strong>Mock</strong> — Simulates a dependency and verifies interactions (expects certain methods to be called). Use <code>mockito</code> or <code>mocktail</code>.<br/>
+        <strong>Stub</strong> — Provides a fixed response without verifying how it was called.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       SECTION 3 — HARD
+  ════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(239,68,68,0.1)">🔥</div>
+      <div>
+        <div class="section-title">Advanced Topics</div>
+        <div style="font-size:0.8rem;color:var(--text-muted)">Performance, architecture, security, platform integration</div>
+      </div>
+      <div class="section-count">Hard</div>
+    </div>
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:75%;background:var(--danger)"></div></div>
+
+    <!-- Q31 -->
+    <div class="card" data-diff="hard" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q31</span>
+        <span class="q-text">How do you optimize Flutter app performance?</span>
+        <div class="card-meta"><span class="diff-pill diff-hard">Hard</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <ul>
+          <li><strong>Use const constructors</strong> — Prevents widget reconstruction if data hasn't changed</li>
+          <li><strong>Minimize setState() scope</strong> — Call it on the smallest possible widget subtree</li>
+          <li><strong>ListView.builder</strong> — Lazy render for large lists</li>
+          <li><strong>RepaintBoundary</strong> — Isolates a subtree from parent repaints (useful for complex animations)</li>
+          <li><strong>Avoid rebuilding expensive widgets</strong> — Use <code>buildWhen</code> in BLoC, <code>select()</code> in Provider/Riverpod</li>
+          <li><strong>Image optimization</strong> — Use <code>cached_network_image</code>, resize images to display size</li>
+          <li><strong>Isolates</strong> — Offload heavy computation off the main isolate</li>
+          <li><strong>Profile mode</strong> — Use Flutter DevTools to identify jank and expensive widgets</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Q32 -->
+    <div class="card" data-diff="hard" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q32</span>
+        <span class="q-text">What is Clean Architecture in Flutter?</span>
+        <div class="card-meta"><span class="diff-pill diff-hard">Hard</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <p>Clean Architecture divides the app into 3 independent layers with strict dependency rules (inner layers don't know about outer layers):</p>
+        <ul>
+          <li><strong>Data Layer</strong> — Data sources (API, local DB), DTOs, Repository implementations</li>
+          <li><strong>Domain Layer</strong> — Entities, Use Cases (business rules), Repository interfaces. Pure Dart, no Flutter/framework dependencies.</li>
+          <li><strong>Presentation Layer</strong> — BLoC/Cubit, widgets, pages. Depends on Domain.</li>
+        </ul>
+        <p>Dependencies flow inward: Presentation → Domain ← Data. The Repository interface in Domain is implemented by Data but consumed by Presentation, enforcing the Dependency Inversion Principle.</p>
+      </div>
+    </div>
+
+    <!-- Q33 -->
+    <div class="card" data-diff="hard" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q33</span>
+        <span class="q-text">What are Platform Channels and how do you write native code?</span>
+        <div class="card-meta"><span class="diff-pill diff-hard">Hard</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <p>Platform Channels allow Flutter (Dart) to communicate with native code (Kotlin/Java for Android, Swift/Objective-C for iOS). Uses message passing with a codec.</p>
+        <pre><span class="cm">// Dart side</span>
+<span class="kw">const</span> channel = <span class="cls">MethodChannel</span>(<span class="str">'com.example/battery'</span>);
+<span class="kw">final</span> level = <span class="kw">await</span> channel.invokeMethod&lt;<span class="kw">int</span>&gt;(<span class="str">'getBatteryLevel'</span>);
+
+<span class="cm">// Kotlin side (Android)</span>
+MethodChannel(flutterEngine.dartExecutor, <span class="str">"com.example/battery"</span>)
+  .setMethodCallHandler { call, result ->
+    <span class="kw">if</span> (call.method == <span class="str">"getBatteryLevel"</span>) result.success(getBatteryLevel())
+    <span class="kw">else</span> result.notImplemented()
+  }</pre>
+        <p>Types: <strong>MethodChannel</strong> (request/response), <strong>EventChannel</strong> (streams of events), <strong>BasicMessageChannel</strong> (arbitrary messages).</p>
+      </div>
+    </div>
+
+    <!-- Q34 -->
+    <div class="card" data-diff="hard" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q34</span>
+        <span class="q-text">How do you implement offline mode in a Flutter app?</span>
+        <div class="card-meta"><span class="diff-pill diff-hard">Hard</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <ul>
+          <li><strong>Cache data locally</strong> — Use Hive, SQLite (sqflite), or Isar for structured local storage</li>
+          <li><strong>Detect connectivity</strong> — Use <code>connectivity_plus</code> to listen for network changes</li>
+          <li><strong>Optimistic UI</strong> — Update UI immediately, sync to server when back online</li>
+          <li><strong>Sync queue</strong> — Queue failed requests locally; replay when connectivity returns</li>
+          <li><strong>Data conflict resolution</strong> — Use timestamps (last-write-wins) or version vectors for conflict detection</li>
+          <li><strong>Offline auth</strong> — Cache tokens locally with <code>flutter_secure_storage</code></li>
+        </ul>
+        <div class="tip-box">For data inconsistency between app and server, prefer a "server-wins" policy for critical data, or prompt the user to resolve conflicts manually.</div>
+      </div>
+    </div>
+
+    <!-- Q35 -->
+    <div class="card" data-diff="hard" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q35</span>
+        <span class="q-text">How do you secure a Flutter app? (JWT, SSL, storage)</span>
+        <div class="card-meta"><span class="diff-pill diff-hard">Hard</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <ul>
+          <li><strong>JWT security</strong> — Store in <code>flutter_secure_storage</code> (Keychain on iOS, Keystore on Android). Set short expiry. Use HTTPS only. Implement refresh tokens.</li>
+          <li><strong>SSL Pinning</strong> — Embed the server's certificate in the app. Reject connections if certificate doesn't match, preventing MITM attacks.</li>
+          <li><strong>Code obfuscation</strong> — Use <code>--obfuscate</code> flag in release builds to hide class/method names</li>
+          <li><strong>API key protection</strong> — Never hardcode in source. Use environment variables, obfuscation, or backend proxy.</li>
+          <li><strong>Jailbreak detection</strong> — Use <code>flutter_jailbreak_detection</code> package</li>
+          <li><strong>Secure network</strong> — Always use HTTPS/TLS. Implement certificate pinning with Dio.</li>
+          <li><strong>Background snapshot protection</strong> — Use <code>secure_application</code> to blur app when backgrounded</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Q36 -->
+    <div class="card" data-diff="hard" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q36</span>
+        <span class="q-text">What are Isolates in Dart and when do you use them?</span>
+        <div class="card-meta"><span class="diff-pill diff-hard">Hard</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <p>Dart is single-threaded. <strong>Isolates</strong> are independent workers that run code in parallel on separate threads, communicating only via message passing (no shared memory).</p>
+        <p>Use Isolates when you have CPU-intensive work that would block the main thread and cause jank:</p>
+        <ul>
+          <li>Parsing large JSON responses</li>
+          <li>Image processing / compression</li>
+          <li>Complex calculations or encryption</li>
+        </ul>
+        <pre><span class="cm">// Simple isolate via compute()</span>
+<span class="kw">final</span> result = <span class="kw">await</span> <span class="fn">compute</span>(parseJsonIsolate, jsonString);
+
+<span class="cls">List</span>&lt;<span class="cls">User</span>&gt; <span class="fn">parseJsonIsolate</span>(<span class="kw">String</span> json) {
+  <span class="kw">return</span> (<span class="fn">jsonDecode</span>(json) <span class="kw">as</span> <span class="cls">List</span>).map((e) => <span class="cls">User</span>.fromJson(e)).toList();
+}</pre>
+      </div>
+    </div>
+
+    <!-- Q37 -->
+    <div class="card" data-diff="hard" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q37</span>
+        <span class="q-text">What is the difference between Equatable and Freezed?</span>
+        <div class="card-meta"><span class="diff-pill diff-hard">Hard</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <ul>
+          <li><strong>Equatable</strong> — Lightweight. Manually list <code>props</code>. Only provides <code>==</code> and <code>hashCode</code>. No code generation needed. Good for BLoC states/events.</li>
+          <li><strong>Freezed</strong> — Code-generated. Provides: value equality, <code>copyWith()</code>, <code>toString()</code>, union types (sealed classes), JSON serialization (with <code>json_serializable</code>). More powerful but requires build_runner.</li>
+        </ul>
+        <pre><span class="cm">// Freezed example</span>
+@<span class="fn">freezed</span>
+<span class="kw">class</span> <span class="cls">User</span> <span class="kw">with</span> <span class="cls">_$User</span> {
+  <span class="kw">const</span> <span class="kw">factory</span> <span class="cls">User</span>({<span class="kw">required</span> <span class="kw">String</span> name, <span class="kw">required</span> <span class="kw">int</span> age}) = _<span class="cls">User</span>;
+  <span class="kw">factory</span> <span class="cls">User</span>.fromJson(<span class="cls">Map</span>&lt;<span class="kw">String</span>, dynamic&gt; json) => _$<span class="cls">UserFromJson</span>(json);
+}</pre>
+      </div>
+    </div>
+
+    <!-- Q38 -->
+    <div class="card" data-diff="hard" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q38</span>
+        <span class="q-text">What is the Flutter Architecture (Embedder, Engine, Framework)?</span>
+        <div class="card-meta"><span class="diff-pill diff-hard">Hard</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <ul>
+          <li><strong>Embedder</strong> (Bottom) — Platform-specific code that integrates Flutter with the OS. Handles input, accessibility, rendering surfaces. Written in Java/C++ (Android), Objective-C/Swift (iOS).</li>
+          <li><strong>Flutter Engine</strong> (Middle) — Written in C++. Handles Dart VM execution, graphics rendering (Skia/Impeller), file I/O, networking. Exposes <code>dart:ui</code> API to the framework.</li>
+          <li><strong>Flutter Framework</strong> (Top) — Written in Dart. Where developers work. Layers: Foundation → Animation/Gestures → Rendering → Widgets → Material/Cupertino.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Q39 -->
+    <div class="card" data-diff="hard" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q39</span>
+        <span class="q-text">How do you implement animations in Flutter?</span>
+        <div class="card-meta"><span class="diff-pill diff-hard">Hard</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <ul>
+          <li><strong>Implicit Animations</strong> — Automatically animate between values. Widgets like <code>AnimatedContainer</code>, <code>AnimatedOpacity</code>, <code>AnimatedSwitcher</code>. Simple, no controller needed.</li>
+          <li><strong>Explicit Animations</strong> — Full control via <code>AnimationController</code> + <code>Tween</code> + <code>AnimatedBuilder</code>. Use when you need precise timing, sequences, or custom curves.</li>
+          <li><strong>Hero Animation</strong> — Smooth shared-element transition between routes. Wrap both widgets in <code>Hero</code> with matching <code>tag</code>.</li>
+          <li><strong>Lottie / Rive</strong> — Pre-built vector animations for complex visuals.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Q40 -->
+    <div class="card" data-diff="hard" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q40</span>
+        <span class="q-text">How do you structure a large-scale Flutter project?</span>
+        <div class="card-meta"><span class="diff-pill diff-hard">Hard</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <p>Feature-first + Clean Architecture combination:</p>
+        <pre>lib/
+├── core/           <span class="cm"># shared utils, constants, theme, DI</span>
+│   ├── di/
+│   ├── network/
+│   └── theme/
+├── features/
+│   ├── auth/
+│   │   ├── data/       <span class="cm"># API, models, repository impl</span>
+│   │   ├── domain/     <span class="cm"># entities, use cases, repo interface</span>
+│   │   └── presentation/ <span class="cm"># bloc, pages, widgets</span>
+│   └── home/
+└── main.dart</pre>
+        <p>Use <strong>get_it</strong> for service location, <strong>GoRouter</strong> for navigation, <strong>BLoC</strong> for state, <strong>Freezed</strong> for models.</p>
+      </div>
+    </div>
+
+    <!-- Q41 -->
+    <div class="card" data-diff="hard" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q41</span>
+        <span class="q-text">What is a Sealed Class in Flutter/Dart?</span>
+        <div class="card-meta"><span class="diff-pill diff-hard">Hard</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <p>Introduced in Dart 3. A sealed class restricts its subclasses to a <strong>finite, known set</strong> defined in the same library. Enables exhaustive pattern matching with <code>switch</code>.</p>
+        <pre><span class="kw">sealed class</span> <span class="cls">AuthState</span> {}
+<span class="kw">class</span> <span class="cls">AuthLoading</span> <span class="kw">extends</span> <span class="cls">AuthState</span> {}
+<span class="kw">class</span> <span class="cls">AuthSuccess</span> <span class="kw">extends</span> <span class="cls">AuthState</span> { <span class="kw">final</span> <span class="cls">User</span> user; <span class="cls">AuthSuccess</span>(<span class="kw">this</span>.user); }
+<span class="kw">class</span> <span class="cls">AuthError</span> <span class="kw">extends</span> <span class="cls">AuthState</span> { <span class="kw">final</span> <span class="kw">String</span> message; <span class="cls">AuthError</span>(<span class="kw">this</span>.message); }
+
+<span class="cm">// Exhaustive switch — compiler ensures all cases handled</span>
+<span class="kw">switch</span> (state) {
+  <span class="kw">case</span> <span class="cls">AuthLoading</span>(): ...
+  <span class="kw">case</span> <span class="cls">AuthSuccess</span>(): ...
+  <span class="kw">case</span> <span class="cls">AuthError</span>(): ...
+}</pre>
+      </div>
+    </div>
+
+    <!-- Q42 -->
+    <div class="card" data-diff="hard" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q42</span>
+        <span class="q-text">What is RepaintBoundary and when should you use it?</span>
+        <div class="card-meta"><span class="diff-pill diff-hard">Hard</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <p><code>RepaintBoundary</code> creates a separate layer for its subtree, so when that subtree repaints, it doesn't trigger repaints in parent or sibling subtrees.</p>
+        <p>Use when:</p>
+        <ul>
+          <li>A subtree animates frequently (e.g., an animated progress indicator in a complex screen)</li>
+          <li>A child has complex painting that is independent of parent changes</li>
+          <li>Flutter DevTools shows unnecessary repaints (red checkerboard in paint debugging)</li>
+        </ul>
+        <div class="tip-box">Overusing RepaintBoundary increases memory usage (each boundary creates a separate texture). Use it surgically based on profiling.</div>
+      </div>
+    </div>
+
+    <!-- Q43 -->
+    <div class="card" data-diff="hard" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q43</span>
+        <span class="q-text">What is Push Notification and how do you implement it in Flutter?</span>
+        <div class="card-meta"><span class="diff-pill diff-hard">Hard</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <p>Push notifications alert users to events when the app is in the background or closed. Implementation using <strong>Firebase Cloud Messaging (FCM)</strong>:</p>
+        <ul>
+          <li>Integrate <code>firebase_messaging</code> package</li>
+          <li>Request notification permissions (<code>messaging.requestPermission()</code>)</li>
+          <li>Get FCM device token and send it to your backend</li>
+          <li>Handle messages: <code>FirebaseMessaging.onMessage</code> (foreground), <code>onMessageOpenedApp</code> (background tap), <code>getInitialMessage()</code> (terminated)</li>
+          <li>For local notifications, use <code>flutter_local_notifications</code></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════
+       SECTION 4 — EXPERT
+  ════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:rgba(124,58,237,0.1)">🧠</div>
+      <div>
+        <div class="section-title">Expert / Senior Level</div>
+        <div style="font-size:0.8rem;color:var(--text-muted)">Dart internals, advanced patterns, behavioral questions</div>
+      </div>
+      <div class="section-count">Expert</div>
+    </div>
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:100%;background:var(--accent2)"></div></div>
+
+    <!-- Q44 -->
+    <div class="card" data-diff="expert" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q44</span>
+        <span class="q-text">What is Concurrency in Dart and how does the Event Loop work?</span>
+        <div class="card-meta"><span class="diff-pill diff-expert">Expert</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <p>Dart is single-threaded and uses an <strong>Event Loop</strong> for concurrency. The event loop has two queues:</p>
+        <ul>
+          <li><strong>Microtask Queue</strong> — Highest priority. Processed before the event queue. Dart Futures that complete synchronously go here (<code>Future.microtask</code>, <code>scheduleMicrotask</code>).</li>
+          <li><strong>Event Queue</strong> — Regular async events: I/O, timer callbacks, user events, <code>Future.delayed</code>.</li>
+        </ul>
+        <p>The loop: process all microtasks → process one event → repeat. True parallelism requires <strong>Isolates</strong>, which have their own event loops and communicate via ports.</p>
+      </div>
+    </div>
+
+    <!-- Q45 -->
+    <div class="card" data-diff="expert" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q45</span>
+        <span class="q-text">What is FFI in Dart?</span>
+        <div class="card-meta"><span class="diff-pill diff-expert">Expert</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <p><strong>FFI (Foreign Function Interface)</strong> allows Dart code to directly call native C libraries without platform channels. It's faster than method channels for performance-critical native code.</p>
+        <pre><span class="kw">import</span> <span class="str">'dart:ffi'</span>;
+
+<span class="kw">final</span> dylib = <span class="cls">DynamicLibrary</span>.open(<span class="str">'libnative.so'</span>);
+<span class="kw">final</span> nativeAdd = dylib.lookupFunction&lt;
+  <span class="cls">Int32</span> <span class="cls">Function</span>(<span class="cls">Int32</span>, <span class="cls">Int32</span>),
+  <span class="kw">int</span> <span class="cls">Function</span>(<span class="kw">int</span>, <span class="kw">int</span>)
+&gt;(<span class="str">'add'</span>);
+
+print(nativeAdd(<span class="num">3</span>, <span class="num">4</span>)); <span class="cm">// 7</span></pre>
+        <p>Use FFI for: encryption libraries, image processing codecs, or integrating existing C/C++ SDKs.</p>
+      </div>
+    </div>
+
+    <!-- Q46 -->
+    <div class="card" data-diff="expert" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q46</span>
+        <span class="q-text">What are Generics in Dart and why are they important?</span>
+        <div class="card-meta"><span class="diff-pill diff-expert">Expert</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <p>Generics allow you to write type-safe, reusable code without sacrificing flexibility. Dart generics are reified — type information is preserved at runtime (unlike Java's type erasure).</p>
+        <pre><span class="cm">// Generic repository</span>
+<span class="kw">abstract class</span> <span class="cls">Repository</span>&lt;T&gt; {
+  <span class="cls">Future</span>&lt;<span class="cls">List</span>&lt;T&gt;&gt; <span class="fn">getAll</span>();
+  <span class="cls">Future</span>&lt;T&gt; <span class="fn">getById</span>(<span class="kw">int</span> id);
+}
+
+<span class="cm">// Generic result type</span>
+<span class="kw">sealed class</span> <span class="cls">Result</span>&lt;T&gt; {}
+<span class="kw">class</span> <span class="cls">Success</span>&lt;T&gt; <span class="kw">extends</span> <span class="cls">Result</span>&lt;T&gt; { <span class="kw">final</span> T data; <span class="cls">Success</span>(<span class="kw">this</span>.data); }
+<span class="kw">class</span> <span class="cls">Failure</span>&lt;T&gt; <span class="kw">extends</span> <span class="cls">Result</span>&lt;T&gt; { <span class="kw">final</span> <span class="kw">String</span> err; <span class="cls">Failure</span>(<span class="kw">this</span>.err); }</pre>
+      </div>
+    </div>
+
+    <!-- Q47 -->
+    <div class="card" data-diff="expert" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q47</span>
+        <span class="q-text">What are Runes and Symbols in Dart?</span>
+        <div class="card-meta"><span class="diff-pill diff-expert">Expert</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <ul>
+          <li><strong>Runes</strong> — A <code>String</code> is a sequence of UTF-16 code units. Runes expose the Unicode code points of a string. Use <code>string.runes</code> to iterate actual characters including emoji and non-BMP characters. <code>'😀'.runes.first</code> → <code>128512</code></li>
+          <li><strong>Symbol</strong> — Represents an operator or identifier in Dart programs. Created with <code>#identifier</code>. Used primarily in reflection via <code>dart:mirrors</code> or code generation. E.g., <code>#print</code> refers to the <code>print</code> identifier.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Q48 -->
+    <div class="card" data-diff="expert" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q48</span>
+        <span class="q-text">What is a Dart Callable Class?</span>
+        <div class="card-meta"><span class="diff-pill diff-expert">Expert</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <p>A callable class implements a <code>call()</code> method, allowing instances to be invoked like functions. Useful for creating reusable, stateful function-like objects.</p>
+        <pre><span class="kw">class</span> <span class="cls">Multiplier</span> {
+  <span class="kw">final</span> <span class="kw">int</span> factor;
+  <span class="cls">Multiplier</span>(<span class="kw">this</span>.factor);
+  <span class="kw">int</span> <span class="fn">call</span>(<span class="kw">int</span> value) => value * factor;
+}
+
+<span class="kw">final</span> triple = <span class="cls">Multiplier</span>(<span class="num">3</span>);
+print(triple(<span class="num">7</span>)); <span class="cm">// 21 — called like a function</span></pre>
+      </div>
+    </div>
+
+    <!-- Q49 -->
+    <div class="card" data-diff="expert" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q49</span>
+        <span class="q-text">What is CI/CD for Flutter apps and how do you set it up?</span>
+        <div class="card-meta"><span class="diff-pill diff-expert">Expert</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <p><strong>CI (Continuous Integration)</strong> — Automatically build, test, and lint on every commit/PR. Tools: GitHub Actions, Bitrise, Codemagic, CircleCI.</p>
+        <p><strong>CD (Continuous Delivery/Deployment)</strong> — Automatically deliver signed builds to testers (Firebase App Distribution, TestFlight) or publish to app stores.</p>
+        <p>Typical Flutter CI/CD pipeline:</p>
+        <ol>
+          <li>Checkout code → <code>flutter pub get</code></li>
+          <li>Run <code>flutter analyze</code> (linting)</li>
+          <li>Run <code>flutter test</code> (unit + widget tests)</li>
+          <li>Build: <code>flutter build apk --release</code> / <code>flutter build ipa</code></li>
+          <li>Sign with keystores/certificates (stored as CI secrets)</li>
+          <li>Deploy to Firebase App Distribution or Play Store/App Store</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- Q50 -->
+    <div class="card" data-diff="expert" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q50</span>
+        <span class="q-text">How do you handle background tasks in Flutter?</span>
+        <div class="card-meta"><span class="diff-pill diff-expert">Expert</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <ul>
+          <li><strong>Isolates</strong> — For CPU-heavy work in parallel without blocking the UI thread</li>
+          <li><strong>workmanager</strong> (package) — Schedule periodic/one-off background tasks that run even when the app is closed (uses WorkManager on Android, BGTaskScheduler on iOS)</li>
+          <li><strong>flutter_background_service</strong> — Long-running foreground services (e.g., location tracking, music playback)</li>
+          <li><strong>Firebase Cloud Messaging</strong> — Trigger background code via push notification data messages</li>
+        </ul>
+        <div class="tip-box">iOS has strict limits on background execution. Always test background behavior on a real device, not just the simulator.</div>
+      </div>
+    </div>
+
+    <!-- Q51 -->
+    <div class="card" data-diff="expert" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q51</span>
+        <span class="q-text">What is MVVM architecture in Flutter?</span>
+        <div class="card-meta"><span class="diff-pill diff-expert">Expert</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <ul>
+          <li><strong>Model</strong> — Data layer: entities, repositories, API services</li>
+          <li><strong>ViewModel</strong> — Holds UI state, exposes streams/ValueNotifiers, contains business logic. Implemented with <code>ChangeNotifier</code>, <code>Riverpod Notifier</code>, or <code>Cubit</code>.</li>
+          <li><strong>View</strong> — Flutter widgets. Observes ViewModel, calls its methods on user actions. Has no business logic.</li>
+        </ul>
+        <p>MVVM is naturally implemented in Flutter with Provider + ChangeNotifier or Riverpod. BLoC can also be considered MVVM where the Bloc is the ViewModel.</p>
+      </div>
+    </div>
+
+    <!-- Q52 — Behavioral -->
+    <div class="card" data-diff="expert" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q52</span>
+        <span class="q-text">Sort an array without predefined sort methods (coding question)</span>
+        <div class="card-meta"><span class="diff-pill diff-expert">Expert</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer — Bubble Sort in Dart</div>
+        <pre><span class="cls">List</span>&lt;<span class="kw">int</span>&gt; <span class="fn">bubbleSort</span>(<span class="cls">List</span>&lt;<span class="kw">int</span>&gt; arr) {
+  <span class="kw">int</span> n = arr.length;
+  <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; n - <span class="num">1</span>; i++) {
+    <span class="kw">for</span> (<span class="kw">int</span> j = <span class="num">0</span>; j &lt; n - i - <span class="num">1</span>; j++) {
+      <span class="kw">if</span> (arr[j] &gt; arr[j + <span class="num">1</span>]) {
+        <span class="kw">int</span> temp = arr[j];
+        arr[j] = arr[j + <span class="num">1</span>];
+        arr[j + <span class="num">1</span>] = temp;
+      }
+    }
+  }
+  <span class="kw">return</span> arr;
+}
+<span class="cm">// Time: O(n²) | Space: O(1)</span>
+<span class="cm">// For interviews, also mention: Merge Sort O(n log n)</span></pre>
+      </div>
+    </div>
+
+    <!-- Q53 -->
+    <div class="card" data-diff="expert" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q53</span>
+        <span class="q-text">What are the drawbacks of Flutter?</span>
+        <div class="card-meta"><span class="diff-pill diff-expert">Expert</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <ul>
+          <li><strong>App size</strong> — Flutter apps bundle the entire rendering engine, making APK/IPA larger than native apps</li>
+          <li><strong>Dart adoption</strong> — Dart is less popular than JS/Swift/Kotlin; smaller talent pool</li>
+          <li><strong>Platform-specific features</strong> — Some native APIs require writing platform channel code</li>
+          <li><strong>Hot reload limitations</strong> — Complex state scenarios may not reload correctly</li>
+          <li><strong>Ecosystem maturity</strong> — Fewer third-party packages compared to React Native</li>
+          <li><strong>Native look & feel</strong> — Pixel-perfect native UI on both platforms simultaneously requires extra effort</li>
+          <li><strong>Desktop support</strong> — Still maturing for Windows, macOS, Linux targets</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Q54 -->
+    <div class="card" data-diff="expert" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q54</span>
+        <span class="q-text">What is tree shaking in Flutter?</span>
+        <div class="card-meta"><span class="diff-pill diff-expert">Expert</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <p>Tree shaking is a dead code elimination technique performed during the AOT build process. The Dart compiler analyzes which code is actually reachable from your app's entry point and removes all unreachable code from the final binary.</p>
+        <p>This is why <code>kDebugMode</code>/<code>kReleaseMode</code> constant flags work: code inside <code>if (kReleaseMode)</code> blocks is tree-shaken away in debug builds (and vice versa), with zero runtime cost.</p>
+      </div>
+    </div>
+
+    <!-- Q55 -->
+    <div class="card" data-diff="expert" onclick="toggleCard(this)">
+      <div class="card-header">
+        <span class="q-num">Q55</span>
+        <span class="q-text">What is GraphQL and how does it differ from REST?</span>
+        <div class="card-meta"><span class="diff-pill diff-expert">Expert</span><span class="chevron">▼</span></div>
+      </div>
+      <div class="card-body">
+        <div class="answer-label">Answer</div>
+        <ul>
+          <li><strong>REST</strong> — Multiple endpoints, each returning a fixed data shape. Can suffer from over-fetching (too much data) or under-fetching (multiple requests needed).</li>
+          <li><strong>GraphQL</strong> — Single endpoint. Client specifies exactly what fields it needs in a query. Eliminates over/under-fetching. Strongly typed schema. Supports real-time with Subscriptions.</li>
+        </ul>
+        <p>In Flutter, use the <code>graphql_flutter</code> package. Queries, Mutations, and Subscriptions are defined as strings and executed via the <code>GraphQLClient</code>.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-title">Flutter Interview Guide</div>
+    <p>Compiled from real interview questions at NTT Data, KGK Group, and other companies.<br/>
+    Covers Flutter, Dart, BLoC, Clean Architecture, Security, and more.</p>
+    <a href="#" class="gh-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.12.83-.26.83-.58v-2.03c-3.34.72-4.04-1.61-4.04-1.61-.54-1.38-1.33-1.74-1.33-1.74-1.08-.74.08-.73.08-.73 1.2.09 1.83 1.23 1.83 1.23 1.07 1.84 2.8 1.3 3.49 1 .11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 013.01-.4c1.02 0 2.05.14 3.01.4 2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.8 5.63-5.48 5.92.43.37.82 1.1.82 2.22v3.29c0 .32.22.7.84.58C20.56 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>
+      Star on GitHub
+    </a>
+    <p style="margin-top:16px;font-size:0.75rem">Made with ❤️ for Flutter developers · 2025</p>
+  </div>
+</footer>
+
+<script>
+  function toggleCard(card) {
+    card.classList.toggle('open');
+  }
+
+  let activeFilter = 'all';
+
+  function filterCards(diff, btn) {
+    activeFilter = diff;
+    document.querySelectorAll('.filter-btn').forEach(b => {
+      b.className = 'filter-btn';
+    });
+    btn.className = `filter-btn active-${diff}`;
+
+    document.querySelectorAll('.card').forEach(card => {
+      if (diff === 'all' || card.dataset.diff === diff) {
+        card.classList.remove('hidden');
+      } else {
+        card.classList.add('hidden');
+        card.classList.remove('open');
+      }
+    });
+    applySearch();
+  }
+
+  function applySearch() {
+    const query = document.getElementById('searchInput').value.toLowerCase().trim();
+    document.querySelectorAll('.card').forEach(card => {
+      if (activeFilter !== 'all' && card.dataset.diff !== activeFilter) {
+        card.classList.add('hidden');
+        return;
+      }
+      const text = card.innerText.toLowerCase();
+      if (query && !text.includes(query)) {
+        card.classList.add('hidden');
+      } else {
+        card.classList.remove('hidden');
+      }
+    });
+  }
+
+  document.getElementById('searchInput').addEventListener('input', applySearch);
+</script>
+</body>
+</html>
